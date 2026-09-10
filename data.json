@@ -1,0 +1,93 @@
+{
+  "profile": {
+    "firstName": "Alexandre Crespo",
+    "lastName": "Ruco",
+    "title": "Strategy, Business & Tech | Real Estate Investor & Consultant",
+    "company": "ruco.pt",
+    "bio": "Master’s (Coimbra), MBA (FGV) & Scopus Author | Google Cert. | Partner to Portuguese Mint, DRE & major accounts",
+    "photoInitials": "AR",
+    "photoUrl": "assets/profile.jpeg",
+    "address": "Lousã, Portugal",
+    "website": "ruco.pt",
+    "phone": "+351927734057",
+    "phoneDisplay": "+351 927 734 057",
+    "email": "alex@ruco.pt"
+  },
+  "ui": {
+    "pageTitle": "{name} — Digital Card",
+    "pageDescription": "Digital business card",
+    "qrAlt": "Card QR code",
+    "sharePrompt": "Point your camera to",
+    "shareEmphasis": "share this card",
+    "shareSuffix": "with someone else."
+  },
+  "palette": {
+    "bg": "#0f1b2b",
+    "bg2": "#16273c",
+    "paper": "#eee8db",
+    "textDim": "#9fb0c4",
+    "textDim2": "#cdd6e2",
+    "accent": "#c8a24a",
+    "accentDim": "#c8a24a55",
+    "line": "#3a4b62"
+  },
+  "video": {
+    "enabled": false,
+    "type": "file",
+    "url": "",
+    "poster": "",
+    "caption": ""
+  },
+  "actions": [
+    {
+      "label": "Save contact (.vcf)",
+      "icon": "fa-solid fa-user-plus",
+      "type": "vcard",
+      "primary": true
+    },
+    {
+      "label": "+351 927 734 057",
+      "icon": "fa-solid fa-phone",
+      "type": "tel",
+      "value": "+351927734057"
+    },
+    {
+      "label": "alex@ruco.pt",
+      "icon": "fa-solid fa-envelope",
+      "type": "email",
+      "value": "alex@ruco.pt"
+    }
+  ],
+  "socials": [
+    {
+      "label": "LinkedIn",
+      "icon": "fa-brands fa-linkedin-in",
+      "url": "https://linkedin.com/in/alexandreruco"
+    },
+    {
+      "label": "Instagram",
+      "icon": "fa-brands fa-instagram",
+      "url": "https://instagram.com/movingglobes"
+    },
+    {
+      "label": "Facebook",
+      "icon": "fa-brands fa-facebook-f",
+      "url": "https://www.facebook.com/alexandrecresporuco/"
+    },
+    {
+      "label": "WhatsApp",
+      "icon": "fa-brands fa-whatsapp",
+      "url": "https://wa.me/351927734057"
+    },
+    {
+      "label": "X",
+      "icon": "fa-brands fa-x-twitter",
+      "url": "https://x.com/rucopt"
+    },
+    {
+      "label": "GitHub",
+      "icon": "fa-brands fa-github",
+      "url": "https://github.com/alexruco"
+    }
+  ]
+}

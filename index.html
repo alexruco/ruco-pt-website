@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<meta name="description" content="">
+
+<!-- Font Awesome (ícones gratuitos, via CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% -10%, var(--bg2) 0%, transparent 55%),
+      radial-gradient(circle at 100% 110%, var(--bg2) 0%, transparent 50%);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Public Sans", sans-serif;
+    color: var(--paper);
+    padding: 32px 16px;
+  }
+  #app{ width:100%; display:flex; justify-content:center; }
+  #loading, #error{ color: var(--text-dim, #9fb0c4); font-size: 14px; }
+  #error{ color: #e08585; }
+
+  .card{
+    width: 100%;
+    max-width: 380px;
+    background: linear-gradient(180deg, var(--bg2), var(--bg));
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 36px 28px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .avatar{
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--accent-dim);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    font-size: 26px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    font-family: Georgia, "Times New Roman", serif;
+    margin-bottom: 18px;
+    flex-shrink:0;
+  }
+  .avatar img{ width:100%; height:100%; object-fit:cover; }
+
+  h1{
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.15;
+    margin: 0 0 2px;
+    color: var(--paper);
+  }
+  .role{ font-size: 14px; color: var(--accent); margin: 0 0 4px; }
+  .company{ font-size: 13px; color: var(--text-dim); margin: 0 0 16px; }
+  .bio{ font-size: 14px; line-height: 1.55; color: var(--text-dim2); margin: 0 0 20px; max-width: 34ch; }
+
+  .video-wrap{ margin: 0 0 22px; border-radius: 12px; overflow:hidden; border: 1px solid var(--line); }
+  .video-wrap video, .video-wrap iframe{ width:100%; display:block; aspect-ratio: 16/9; background:#000; border:0; }
+  .video-caption{ font-size: 11px; color: var(--text-dim); padding: 8px 10px; }
+
+  .actions{ display:flex; flex-direction:column; gap:10px; margin-bottom: 22px; }
+  .btn{
+    display:flex; align-items:center; gap:12px;
+    padding: 13px 16px; border-radius: 12px;
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.02);
+    color: var(--paper); text-decoration:none; font-size: 14.5px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ border-color: var(--accent-dim); background: rgba(200,162,74,0.06); }
+  .btn.primary{ background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; justify-content:center; }
+  .btn.primary:hover{ filter: brightness(1.08); }
+  .btn .ic{ width:18px; text-align:center; flex-shrink:0; }
+
+  .socials{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom: 24px; }
+  .socials a{
+    width:40px; height:40px; border-radius: 50%;
+    border: 1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--paper); text-decoration:none; font-size: 15px;
+  }
+  .socials a:hover{ border-color: var(--accent-dim); color: var(--accent); }
+
+  .divider{ border:none; border-top: 1px dashed var(--line); margin: 0 0 20px; }
+
+  .qr-row{ display:flex; align-items:center; gap:14px; }
+  .qr-row img{ width: 76px; height: 76px; border-radius: 8px; background: #fff; padding: 4px; }
+  .qr-text{ font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .qr-text b{ color: var(--paper); font-weight:600; }
+
+  footer{ text-align:center; margin-top: 22px; font-size: 11px; color: #6f7f93; }
+
+  /* ---------- Desktop layout ---------- */
+  @media (min-width: 860px){
+    .card{
+      max-width: 520px;
+      padding: 44px;
+      box-shadow: 0 30px 80px -30px rgba(0,0,0,0.6);
+    }
+    .avatar{ width: 96px; height: 96px; font-size: 30px; margin-bottom: 20px; }
+    h1{ font-size: 32px; }
+    .bio{ max-width: 44ch; }
+  }
+</style>
+</head>
+<body>
+  <div id="app">
+  </div>
+
+<script>
+async function init(){
+  const app = document.getElementById("app");
+  let data;
+  try{
+    const res = await fetch("data.json", { cache: "no-store" });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+  }catch(err){
+    app.replaceChildren();
+    console.error(err);
+    return;
+  }
+
+  const { profile, palette, video, actions, socials, ui } = data;
+
+  // Paleta -> CSS vars
+  const root = document.documentElement.style;
+  root.setProperty("--bg", palette.bg);
+  root.setProperty("--bg2", palette.bg2);
+  root.setProperty("--paper", palette.paper);
+  root.setProperty("--text-dim", palette.textDim);
+  root.setProperty("--text-dim2", palette.textDim2);
+  root.setProperty("--accent", palette.accent);
+  root.setProperty("--accent-dim", palette.accentDim);
+  root.setProperty("--line", palette.line);
+
+  const fullName = `${profile.firstName} ${profile.lastName}`;
+  document.title = ui.pageTitle.replace("{name}", fullName);
+  document.querySelector('meta[name="description"]').content = ui.pageDescription;
+
+  // vCard
+  function buildVCard(p){
+    return [
+      "BEGIN:VCARD","VERSION:3.0",
+      `N:${p.lastName};${p.firstName};;;`,
+      `FN:${fullName}`,
+      `ORG:${p.company || ""}`,
+      `TITLE:${p.title || ""}`,
+      `TEL;TYPE=CELL:${p.phone || ""}`,
+      `EMAIL:${p.email || ""}`,
+      `URL:${p.website || ""}`,
+      `ADR;TYPE=WORK:;;${p.address || ""};;;;`,
+      "END:VCARD"
+    ].join("\n");
+  }
+  const vcardUrl = URL.createObjectURL(new Blob([buildVCard(profile)], { type: "text/vcard" }));
+
+  function actionHref(a){
+    if(a.type === "vcard") return vcardUrl;
+    if(a.type === "tel") return `tel:${a.value}`;
+    if(a.type === "email") return `mailto:${a.value}`;
+    return a.url || a.value || "#";
+  }
+
+  function renderActions(items){
+    return items.map(a => `
+    <a class="btn${a.primary ? " primary" : ""}" href="${actionHref(a)}"
+       ${a.type === "vcard" ? `download="${profile.firstName}_${profile.lastName}.vcf"` : ""}
+       ${a.type === "link" ? `target="_blank" rel="noopener"` : ""}>
+      <span class="ic"><i class="${a.icon}"></i></span> <span>${a.label}</span>
+    </a>`).join("");
+  }
+
+  const enabledActions = (actions || []).filter(a => a.enabled !== false);
+  const contactActionsHtml = renderActions(enabledActions.filter(a => !a.primary));
+  const primaryActionsHtml = renderActions(enabledActions.filter(a => a.primary));
+
+  const socialsHtml = (socials || []).filter(s => s.enabled !== false).map(s => `
+    <a href="${s.url}" target="_blank" rel="noopener" title="${s.label}">
+      <i class="${s.icon}"></i>
+    </a>`).join("");
+
+  let videoHtml = "";
+  if(video && video.enabled){
+    if(video.type === "youtube"){
+      const embed = video.url.includes("embed") ? video.url : video.url.replace("watch?v=", "embed/");
+      videoHtml = `<div class="video-wrap"><iframe src="${embed}" allowfullscreen></iframe>
+        ${video.caption ? `<div class="video-caption">${video.caption}</div>` : ""}</div>`;
+    } else {
+      videoHtml = `<div class="video-wrap">
+        <video controls ${video.poster ? `poster="${video.poster}"` : ""}><source src="${video.url}"></video>
+        ${video.caption ? `<div class="video-caption">${video.caption}</div>` : ""}</div>`;
+    }
+  }
+
+  const pageUrl = window.location.href.split("#")[0].replace(/index\.html?$/, "");
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(pageUrl)}`;
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="avatar">${profile.photoUrl ? `<img src="${profile.photoUrl}" alt="${fullName}">` : profile.photoInitials}</div>
+      <h1>${fullName}</h1>
+      <p class="role">${profile.title || ""}</p>
+      <p class="company">${profile.company || ""}</p>
+      <p class="bio">${profile.bio || ""}</p>
+
+      ${contactActionsHtml ? `<div class="actions">${contactActionsHtml}</div>` : ""}
+      ${socialsHtml ? `<div class="socials">${socialsHtml}</div>` : ""}
+      ${videoHtml}
+      ${primaryActionsHtml ? `<div class="actions">${primaryActionsHtml}</div>` : ""}
+
+      <hr class="divider">
+      <div class="qr-row">
+        <img src="${qrSrc}" alt="${ui.qrAlt}">
+        <div class="qr-text">${ui.sharePrompt}<br><b>${ui.shareEmphasis}</b><br>${ui.shareSuffix}</div>
+      </div>
+      <footer>${pageUrl.replace(/^https?:\/\//, "")}</footer>
+    </div>
+  `;
+}
+init();
+</script>
+</body>
+</html>
